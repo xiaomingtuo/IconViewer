@@ -15,11 +15,12 @@ import java.io.FileNotFoundException;
 
 /**
  * Created by David Sommer on 19.05.17.
+ *
  * @author davidsommer
  */
-public class ImageIconProvider  extends IconProvider {
+public class ImageIconProvider implements IconProvider {
 
-    private static final int IMG_WIDTH  = 16;
+    private static final int IMG_WIDTH = 16;
     private static final int IMG_HEIGHT = 16;
 
     public Icon getIcon(@NotNull PsiElement psiElement, int flags) {
@@ -27,10 +28,13 @@ public class ImageIconProvider  extends IconProvider {
         if (checkImagePath(containingFile)) {
             Image image;
             try {
-                image = ImageLoader.loadFromStream(new BufferedInputStream(new FileInputStream(containingFile.getVirtualFile().getCanonicalFile().getCanonicalPath())));
+//                image = ImageLoader.loadFromStream(new BufferedInputStream(new FileInputStream(containingFile.getVirtualFile().getCanonicalFile().getCanonicalPath())));
+                image = ImageLoader.loadFromStream(new BufferedInputStream(
+                        new FileInputStream(containingFile.getVirtualFile().getPath())));
+
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-                throw new IllegalStateException("Error loading preview Icon - " + containingFile.getVirtualFile().getCanonicalFile().getCanonicalPath());
+                throw new IllegalStateException("Error loading preview Icon - " + containingFile.getVirtualFile().getPath());
             }
 
             if (image != null) {
@@ -41,6 +45,6 @@ public class ImageIconProvider  extends IconProvider {
     }
 
     private boolean checkImagePath(PsiFile containingFile) {
-        return containingFile != null && containingFile.getVirtualFile() != null && containingFile.getVirtualFile().getCanonicalFile() != null && containingFile.getVirtualFile().getCanonicalFile().getCanonicalPath() != null && UIUtils.isImageFile(containingFile.getName()) && ! containingFile.getVirtualFile().getCanonicalFile().getCanonicalPath().contains(".jar");
+        return containingFile != null && containingFile.getVirtualFile() != null && containingFile.getVirtualFile() != null && containingFile.getVirtualFile().getPath() != null && UIUtils.isImageFile(containingFile.getName()) && !containingFile.getVirtualFile().getPath().contains(".jar");
     }
 }
